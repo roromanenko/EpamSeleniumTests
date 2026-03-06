@@ -5,6 +5,10 @@ using OpenQA.Selenium;
 
 namespace Tests;
 
+/// <summary>
+/// Base class for all test fixtures.
+/// Handles WebDriver initialization and cleanup for each test.
+/// </summary>
 [TestFixture]
 public abstract class BaseTest
 {

@@ -10,18 +10,20 @@ namespace Core.Drivers;
 /// </summary>
 public static class DriverOptionsFactory
 {
-	public static DriverOptions GetOptions(string browserName)
-	{
-		var browserLowerName = browserName.ToLower();
-		DriverOptions options = browserLowerName switch
+
+	/// <summary>
+	/// Returns browser-specific WebDriver options for the given browser name.
+	/// </summary>
+	/// <param name="browserName">The name of the browser (e.g. "chrome", "firefox").</param>
+	/// <returns>A configured <see cref="DriverOptions"/> instance for the specified browser.</returns>
+	/// <exception cref="ArgumentException">Thrown when the specified browser is not supported.</exception>
+	public static DriverOptions GetOptions(string browserName) =>
+		browserName.ToLower() switch
 		{
 			"chrome" => CreateChromeOptions(),
 			"firefox" => CreateFirefoxOptions(),
 			_ => throw new ArgumentException($"Unsupported browser: {browserName}")
 		};
-
-		return options;
-	}
 
 	#region Chrome Options
 

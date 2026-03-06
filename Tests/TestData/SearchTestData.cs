@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Tests.TestData;
 
-namespace Tests.TestData;
-
+/// <summary>
+/// Provides test data for search position test cases.
+/// </summary>
 public static class SearchTestData
 {
 	public static IEnumerable<TestCaseData> SearchPositionData =>

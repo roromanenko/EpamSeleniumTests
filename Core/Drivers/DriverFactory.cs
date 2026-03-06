@@ -8,11 +8,12 @@ using WebDriverManager.DriverConfigs.Impl;
 
 namespace Core.Drivers;
 
-public sealed class DriverFactory
+/// <summary>
+/// Factory for creating and managing WebDriver instances per browser and thread.
+/// </summary>
+public static class DriverFactory
 {
 	private static readonly ConcurrentDictionary<string, Lazy<ThreadLocal<IWebDriver>>> _drivers = new();
-
-	private DriverFactory() { }
 
 	/// <summary>
 	/// Gets the singleton WebDriver instance.
@@ -38,14 +39,28 @@ public sealed class DriverFactory
 		};
 	}
 
+	/// <summary>
+	/// Creates a Chrome WebDriver instance using UndetectedChromeDriver to bypass Cloudflare bot protection.
+	/// Uses GetMatchingBrowserVersion() to resolve ChromeDriver/Chrome version mismatch.
+	/// See teams message for more details.
+	/// </summary>
 	private static ThreadLocal<IWebDriver> CreateChromeDriver(ChromeOptions options)
 	{
-		var driverExecutablePath = new DriverManager().SetUpDriver(new ChromeConfig(), "145.0.7632.160");
+		var driverPath = GetChromeDriverPath();
+
 		return new ThreadLocal<IWebDriver>(() =>
 			UndetectedChromeDriver.Create(
 				options: options,
-				driverExecutablePath: driverExecutablePath
+				driverExecutablePath: driverPath
 			));
+	}
+
+	private static string GetChromeDriverPath()
+	{
+		var config = new ChromeConfig();
+		var version = config.GetMatchingBrowserVersion();
+
+		return new DriverManager().SetUpDriver(config, version);
 	}
 
 	private static ThreadLocal<IWebDriver> CreateFirefoxDriver(FirefoxOptions options)
@@ -56,6 +71,9 @@ public sealed class DriverFactory
 
 	#endregion
 
+	/// <summary>
+	/// Quits and disposes all driver instances for the specified browser across all threads.
+	/// </summary>
 	public static void QuitDriver(string browserName)
 	{
 		if (_drivers.TryGetValue(browserName, out var webDriver))
@@ -87,12 +105,5 @@ public sealed class DriverFactory
 				webDriver.Value.Value?.Dispose();
 			}
 		}
-	}
-
-	public static bool IsDriverInitialized(string browserName)
-	{
-		return _drivers.TryGetValue(browserName, out var webDriver)
-			&& webDriver.IsValueCreated
-			&& webDriver.Value.IsValueCreated;
 	}
 }
