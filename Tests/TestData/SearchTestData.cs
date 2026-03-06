@@ -1,7 +1,7 @@
 ﻿namespace Tests.TestData;
 
 /// <summary>
-/// Provides test data for search position test cases.
+/// Provides test data for test cases.
 /// </summary>
 public static class SearchTestData
 {
@@ -11,5 +11,12 @@ public static class SearchTestData
 		new TestCaseData("Python"),
 		new TestCaseData("DevOps"),
 		new TestCaseData("Java"),
+	];
+
+	public static IEnumerable<TestCaseData> GlobalSearchData =>
+	[
+		new TestCaseData("Blockchain"),
+		new TestCaseData("Cloud"),
+		new TestCaseData("Automation"),
 	];
 }
