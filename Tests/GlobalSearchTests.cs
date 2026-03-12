@@ -11,11 +11,11 @@ public class GlobalSearchTests : BaseTest
 {
 	private static class Locators
 	{
-		public static readonly By MagnifierIcon = By.XPath("//span[@class='search-icon dark-icon header-search__search-icon']");
-		public static readonly By SearchInput = By.Id("new_form_search");
+		public static readonly By MagnifierIcon = By.ClassName("search-icon");
+		public static readonly By SearchInput = By.TagName("input");
 		public static readonly By FindButton = By.CssSelector("button:has(span.bth-text-layer)");
-		public static By SearchResults(string keyword) =>
-			By.XPath($"//div[@class='search-results__items']//a[contains(text(), '{keyword}')]");
+		public static By SearchResultByKeyword(string keyword) =>
+			By.PartialLinkText(keyword);
 	}
 
 	/// <summary>
@@ -38,7 +38,7 @@ public class GlobalSearchTests : BaseTest
 
 		Wait.WaitForElementClickable(Locators.FindButton).Click();
 
-		var results = Driver.FindElements(Locators.SearchResults(keyword));
+		var results = Driver.FindElements(Locators.SearchResultByKeyword(keyword));
 		results.Should().NotBeEmpty($"Expected search results should contain '{keyword}'");
 		results.All(r => r.Text.Contains(keyword, StringComparison.OrdinalIgnoreCase))
 			.Should().BeTrue($"Expected all links to contain '{keyword}'");

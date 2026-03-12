@@ -10,12 +10,12 @@ public class SearchPositionTests : BaseTest
 	{
 		public static readonly By CareersLink = By.LinkText("Careers");
 		public static readonly By StartSearchButton = By.XPath("//div[@class='pinned-button']//span[text()='Start Your Search Here']");
-		public static readonly By KeywordsInput = By.ClassName("SearchBox_input__sJnt2");
-		public static readonly By RemoteOption = By.XPath("//span[text()='Remote'][1]");
-		public static readonly By SearchButton = By.XPath("//span[contains(text(), 'SEARCH')]");
-		public static readonly By LatestJobResult = By.XPath("(//div[@class='JobCard_panel__gTD7e'])[last()]/div[@role='group']/div/div[@class='AccordionSection_title__L0ERa JobCard_accordionTitle__D1KeP']//a");
-		public static readonly By ApplyButton = By.Name("button_cta_job_apply_unauthorized");
-		public static readonly By ApplicationHeading = By.XPath("//h2[text() = 'Application']");
+		public static readonly By KeywordsInput = By.Name("search");
+		public static readonly By RemoteOption = By.XPath("//span[text()='Remote']");
+		public static readonly By SearchButton = By.XPath("//form[@aria-label='form']//descendant::button");
+		public static readonly By LatestJobResult = By.XPath("(//a[@data-testid='job-card-link'])[last()]");
+		public static readonly By ApplyButton = By.Id("cta_job_apply_unauthorized");
+		public static readonly By ApplicationHeading = By.CssSelector("#modal-title");
 	}
 
 	/// <summary>
