@@ -1,4 +1,7 @@
-﻿using FluentAssertions;
+﻿using Core.Configuration;
+using Core.Drivers;
+using Core.Helpers;
+using FluentAssertions;
 using OpenQA.Selenium;
 using Tests.TestData;
 
@@ -15,7 +18,8 @@ public class SearchPositionTests : BaseTest
 		public static readonly By SearchButton = By.XPath("//form[@aria-label='form']//descendant::button");
 		public static readonly By LatestJobResult = By.XPath("(//a[@data-testid='job-card-link'])[last()]");
 		public static readonly By ApplyButton = By.Id("cta_job_apply_unauthorized");
-		public static readonly By ApplicationHeading = By.CssSelector("#modal-title");
+		public static readonly By PageBody = By.XPath("//div[@data-testid='apply-wizard']");
+		public static By LocationOption = By.CssSelector("#react-select-38-input");
 	}
 
 	/// <summary>
@@ -28,15 +32,15 @@ public class SearchPositionTests : BaseTest
 	/// 6. Click on the button "Find"<br/>
 	/// 7. Click on the latest element in the list of results<br/>
 	/// 8. Click on the button "View and apply"<br/>
-	/// 9. Validate that "Application" heading is present on the page
+	/// 9. Validate that the programming language mentioned above is present on the page
 	/// </summary>
 	[TestCaseSource(typeof(SearchTestData), nameof(SearchTestData.SearchPositionData))]
-	public void ValidateUserCanSearchForPositionByCriteria(string keyword)
+	public void ValidateUserCanSearchForPositionByCriteria(string keyword, string location)
 	{
-		Driver!.Navigate().GoToUrl(Config.BaseUrl);
-		Wait!.WaitForElementClickable(Locators.CareersLink).Click();
+		Driver.Navigate().GoToUrl(Config.BaseUrl);
+		Wait.WaitForElementClickable(Locators.CareersLink).Click();
 		Wait.JsClick(Locators.StartSearchButton);
-		Wait.HandleCookieBanner();
+		PageSetup.HandleCookieBanner();
 
 		var keywordsInput = Wait.WaitForElement(Locators.KeywordsInput);
 		keywordsInput.Clear();
@@ -47,8 +51,7 @@ public class SearchPositionTests : BaseTest
 		Wait.WaitForElementClickable(Locators.LatestJobResult).Click();
 		Wait.WaitForElementClickable(Locators.ApplyButton).Click();
 
-		var applicationHeading = Wait.WaitForElement(Locators.ApplicationHeading);
-		applicationHeading.Should().NotBeNull();
-		applicationHeading.Displayed.Should().BeTrue();
+		var pageText = Wait.WaitForElementVisible(Locators.PageBody).Text;
+		pageText.Should().Contain(keyword, $"Expected page to contain '{keyword}'");
 	}
 }

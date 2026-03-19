@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Core.Configuration;
+using Core.Drivers;
 using FluentAssertions;
 using OpenQA.Selenium;
 using Tests.TestData;
@@ -29,8 +28,8 @@ public class GlobalSearchTests : BaseTest
 	[TestCaseSource(typeof(SearchTestData), nameof(SearchTestData.GlobalSearchData))]
 	public void ValidateGlobalSearchWorksAsExpected(string keyword)
 	{
-		Driver!.Navigate().GoToUrl(Config.BaseUrl);
-		Wait!.WaitForElementClickable(Locators.MagnifierIcon).Click();
+		Driver.Navigate().GoToUrl(Config.BaseUrl);
+		Wait.WaitForElementClickable(Locators.MagnifierIcon).Click();
 
 		var searchInput = Wait.WaitForElement(Locators.SearchInput);
 		searchInput.Clear();
@@ -38,7 +37,7 @@ public class GlobalSearchTests : BaseTest
 
 		Wait.WaitForElementClickable(Locators.FindButton).Click();
 
-		var results = Driver.FindElements(Locators.SearchResultByKeyword(keyword));
+		var results = Wait.WaitForElements(Locators.SearchResultByKeyword(keyword));
 		results.Should().NotBeEmpty($"Expected search results should contain '{keyword}'");
 		results.All(r => r.Text.Contains(keyword, StringComparison.OrdinalIgnoreCase))
 			.Should().BeTrue($"Expected all links to contain '{keyword}'");
