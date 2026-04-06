@@ -20,16 +20,16 @@ public class WaitHelper
 	}
 
 	/// <summary>
-	/// Waits until the element is present in the DOM and returns it.
+	/// Core wait method. Handles StaleElementReferenceException for all wait operations.
 	/// </summary>
-	public IWebElement WaitForElement(By locator)
+	private IWebElement WaitForElement(Func<IWebDriver, IWebElement?> condition)
 	{
 		return _wait.Until(d =>
 		{
 			try
 			{
-				var element = d.FindElement(locator);
-				_ = element.Enabled;
+				var element = condition(d);
+				_ = element?.Enabled;
 				return element;
 			}
 			catch (StaleElementReferenceException)
@@ -40,24 +40,16 @@ public class WaitHelper
 	}
 
 	/// <summary>
+	/// Waits until the element is present in the DOM and returns it.
+	/// </summary>
+	public IWebElement WaitForElement(By locator) =>
+		WaitForElement(d => d.FindElement(locator));
+
+	/// <summary>
 	/// Waits until the element is visible and clickable, then returns it.
 	/// </summary>
-	public IWebElement WaitForElementClickable(By locator)
-	{
-		return _wait.Until(d =>
-		{
-			try
-			{
-				var element = ExpectedConditions.ElementToBeClickable(locator)(d);
-				_ = element?.Enabled;
-				return element;
-			}
-			catch (StaleElementReferenceException)
-			{
-				return null;
-			}
-		});
-	}
+	public IWebElement WaitForElementClickable(By locator) =>
+		WaitForElement(d => ExpectedConditions.ElementToBeClickable(locator)(d));
 
 	/// <summary>
 	/// Clicks an element using JavaScript, bypassing visibility or intercept issues.
@@ -70,17 +62,14 @@ public class WaitHelper
 	}
 
 	/// <summary>
-	/// Accepts the cookie consent banner if present and waits until it disappears.
+	/// Waits until at least one element matching the locator is present and returns all matches.
 	/// </summary>
-	public void HandleCookieBanner()
+	public IReadOnlyCollection<IWebElement> WaitForElements(By locator)
 	{
-		try
+		return _wait.Until(d =>
 		{
-			var acceptButton = _driver.FindElement(By.Id("onetrust-accept-btn-handler"));
-			((IJavaScriptExecutor)_driver).ExecuteScript("arguments[0].click();", acceptButton);
-			_wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.Id("onetrust-banner-sdk")));
-		}
-		catch (NoSuchElementException) { }
-		catch (WebDriverTimeoutException) { }
+			var elements = d.FindElements(locator);
+			return elements.Count > 0 ? elements : null;
+		});
 	}
 }

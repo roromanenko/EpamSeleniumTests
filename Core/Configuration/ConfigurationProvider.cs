@@ -1,11 +1,12 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Core.Interfaces;
+using Microsoft.Extensions.Configuration;
 
 namespace Core.Configuration;
 
 /// <summary>
 /// Provides access to the test configuration loaded from appsettings.json.
 /// </summary>
-public class ConfigurationProvider
+public class ConfigurationProvider : ITestConfigurationProvider
 {
 	private static readonly Lazy<TestConfiguration> _config = new(() => LoadConfiguration());
 
@@ -13,6 +14,8 @@ public class ConfigurationProvider
 	/// Gets the singleton test configuration instance.
 	/// </summary>
 	public static TestConfiguration Config => _config.Value;
+
+	public TestConfiguration GetConfiguration() => Config;
 
 	private static TestConfiguration LoadConfiguration()
 	{

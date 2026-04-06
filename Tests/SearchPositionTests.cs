@@ -16,10 +16,10 @@ public class SearchPositionTests : BaseTest
 	/// 6. Click on the button "Find"<br/>
 	/// 7. Click on the latest element in the list of results<br/>
 	/// 8. Click on the button "View and apply"<br/>
-	/// 9. Validate that "Application" heading is present on the page
+	/// 9. Validate that the programming language mentioned above is present on the page
 	/// </summary>
 	[TestCaseSource(typeof(SearchTestData), nameof(SearchTestData.SearchPositionData))]
-	public void ValidateUserCanSearchForPositionByCriteria(string keyword)
+	public void ValidateUserCanSearchForPositionByCriteria(string keyword, string location)
 	{
 		var homePage = new HomePage(Driver!, Wait!);
 		homePage.NavigateTo(Config.BaseUrl);

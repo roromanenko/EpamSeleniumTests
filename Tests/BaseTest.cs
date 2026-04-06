@@ -1,6 +1,7 @@
 ﻿using Core.Configuration;
-using Core.Drivers;
 using Core.Helpers;
+using Core.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using OpenQA.Selenium;
 
 namespace Tests;
@@ -12,18 +13,29 @@ namespace Tests;
 [TestFixture]
 public abstract class BaseTest
 {
-	protected IWebDriver? Driver { get; private set; }
-	protected WaitHelper? Wait { get; private set; }
-	protected static readonly TestConfiguration Config = ConfigurationProvider.Config;
+	private static readonly IServiceProvider _serviceProvider = ServiceProviderFactory.Create();
+
+	protected readonly IWebDriverFactory DriverFactory =
+		_serviceProvider.GetRequiredService<IWebDriverFactory>();
+	protected TestConfiguration Config =
+		_serviceProvider.GetRequiredService<ITestConfigurationProvider>().GetConfiguration();
+
+	protected IWebDriver Driver { get; private set; }
+	protected WaitHelper Wait { get; private set; }
+	protected PageSetupHelper PageSetup { get; private set; } = null!;
+
+	public BaseTest()
+	{
+	}
 
 	[SetUp]
 	public void SetUp()
 	{
-		Driver = DriverFactory.GetDriver(Config.Browser).Value;
-		Wait = new WaitHelper(Driver!, Config.Timeouts.ExplicitWait);
-
-		Driver!.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(Config.Timeouts.ImplicitWait);
-
+		Driver = DriverFactory.GetDriver(Config.Browser).Value
+			?? throw new InvalidOperationException("WebDriver instance is null.");
+		Wait = new WaitHelper(Driver, Config.Timeouts.ExplicitWait);
+		PageSetup = new PageSetupHelper(Driver, Config.Timeouts.ExplicitWait);
+		Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(Config.Timeouts.ImplicitWait);
 	}
 
 	[TearDown]

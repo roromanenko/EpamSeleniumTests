@@ -7,10 +7,10 @@ public static class SearchTestData
 {
 	public static IEnumerable<TestCaseData> SearchPositionData =>
 	[
-		new TestCaseData(".NET"),
-		new TestCaseData("Python"),
-		new TestCaseData("DevOps"),
-		new TestCaseData("Java"),
+		new TestCaseData(".NET", "Ukraine"),
+		new TestCaseData("Python", "Ukraine"),
+		new TestCaseData("DevOps", "Ukraine"),
+		new TestCaseData("Java", "Ukraine"),
 	];
 
 	public static IEnumerable<TestCaseData> GlobalSearchData =>
