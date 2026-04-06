@@ -60,26 +60,6 @@ public class WaitHelper
 	}
 
 	/// <summary>
-	/// Waits until the element is visible in the DOM and returns it.
-	/// </summary>
-	public IWebElement WaitForElementVisible(By locator)
-	{
-		return _wait.Until(d =>
-		{
-			try
-			{
-				var element = ExpectedConditions.ElementIsVisible(locator)(d);
-				_ = element?.Enabled;
-				return element;
-			}
-			catch (StaleElementReferenceException)
-			{
-				return null;
-			}
-		});
-	}
-
-	/// <summary>
 	/// Clicks an element using JavaScript, bypassing visibility or intercept issues.
 	/// Use as a fallback when a regular click fails due to overlapping elements or animations.
 	/// </summary>

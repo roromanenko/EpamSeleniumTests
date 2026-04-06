@@ -3,5 +3,6 @@
     <File Path=".editorconfig" />
   </Folder>
   <Project Path="Core/Core.csproj" />
+  <Project Path="PageObjects/PageObjects.csproj" />
   <Project Path="Tests/Tests.csproj" />
 </Solution>

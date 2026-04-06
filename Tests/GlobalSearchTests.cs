@@ -1,23 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using FluentAssertions;
-using OpenQA.Selenium;
+using PageObjects;
 using Tests.TestData;
 
 namespace Tests;
 
 public class GlobalSearchTests : BaseTest
 {
-	private static class Locators
-	{
-		public static readonly By MagnifierIcon = By.XPath("//span[@class='search-icon dark-icon header-search__search-icon']");
-		public static readonly By SearchInput = By.Id("new_form_search");
-		public static readonly By FindButton = By.CssSelector("button:has(span.bth-text-layer)");
-		public static By SearchResults(string keyword) =>
-			By.XPath($"//div[@class='search-results__items']//a[contains(text(), '{keyword}')]");
-	}
-
 	/// <summary>
 	/// TC-2: Validate global search works as expected<br/>
 	/// 1. Navigate to https://www.epam.com/<br/>
@@ -29,16 +17,13 @@ public class GlobalSearchTests : BaseTest
 	[TestCaseSource(typeof(SearchTestData), nameof(SearchTestData.GlobalSearchData))]
 	public void ValidateGlobalSearchWorksAsExpected(string keyword)
 	{
-		Driver!.Navigate().GoToUrl(Config.BaseUrl);
-		Wait!.WaitForElementClickable(Locators.MagnifierIcon).Click();
+		var homePage = new HomePage(Driver!, Wait!);
+		homePage.NavigateTo(Config.BaseUrl);
 
-		var searchInput = Wait.WaitForElement(Locators.SearchInput);
-		searchInput.Clear();
-		searchInput.SendKeys(keyword);
+		var searchPage = homePage.OpenSearch();
+		searchPage.SearchFor(keyword);
 
-		Wait.WaitForElementClickable(Locators.FindButton).Click();
-
-		var results = Driver.FindElements(Locators.SearchResults(keyword));
+		var results = searchPage.GetResultLinks(keyword);
 		results.Should().NotBeEmpty($"Expected search results should contain '{keyword}'");
 		results.All(r => r.Text.Contains(keyword, StringComparison.OrdinalIgnoreCase))
 			.Should().BeTrue($"Expected all links to contain '{keyword}'");
