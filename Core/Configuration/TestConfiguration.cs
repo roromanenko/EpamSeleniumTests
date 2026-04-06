@@ -8,6 +8,7 @@ public class TestConfiguration
 	public required string Browser { get; set; }
 	public required string BaseUrl { get; set; }
 	public required TimeoutsConfiguration Timeouts { get; set; }
+	public required string DownloadDirectory { get; set; }
 }
 
 /// <summary>

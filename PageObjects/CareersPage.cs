@@ -20,7 +20,7 @@ public class CareersPage : BasePage
 
 	#endregion
 
-	public CareersPage(IWebDriver driver, WaitHelper wait) : base(driver, wait) { }
+	public CareersPage(IWebDriver driver, WaitHelper wait, PageSetupHelper pageSetup) : base(driver, wait, pageSetup) { }
 
 	#region Actions
 
@@ -32,7 +32,7 @@ public class CareersPage : BasePage
 	public JobApplicationPage SearchForPosition(string keyword)
 	{
 		Click(_startSearchButton);
-		Wait.HandleCookieBanner();
+		PageSetup.HandleCookieBanner();
 
 		Type(_keywordsInput, keyword);
 
@@ -40,7 +40,7 @@ public class CareersPage : BasePage
 		Click(_searchButton);
 		Click(_latestJobResult);
 
-		return new JobApplicationPage(Driver, Wait);
+		return new JobApplicationPage(Driver, Wait, PageSetup);
 	}
 
 	#endregion

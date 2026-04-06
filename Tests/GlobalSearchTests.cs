@@ -17,7 +17,7 @@ public class GlobalSearchTests : BaseTest
 	[TestCaseSource(typeof(SearchTestData), nameof(SearchTestData.GlobalSearchData))]
 	public void ValidateGlobalSearchWorksAsExpected(string keyword)
 	{
-		var homePage = new HomePage(Driver!, Wait!);
+		var homePage = new HomePage(Driver!, Wait!, PageSetup);
 		homePage.NavigateTo(Config.BaseUrl);
 
 		var searchPage = homePage.OpenSearch();

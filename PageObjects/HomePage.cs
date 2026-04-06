@@ -11,9 +11,11 @@ public class HomePage : BasePage
 
 	private static readonly By _careersLink = By.LinkText("Careers");
 
+	private static readonly By _policiesPdfLink = By.XPath("//footer//a[contains(text(),'Code of Ethical Conduct')]");
+
 	#endregion
 
-	public HomePage(IWebDriver driver, WaitHelper wait) : base(driver, wait) { }
+	public HomePage(IWebDriver driver, WaitHelper wait, PageSetupHelper pageSetup) : base(driver, wait, pageSetup) { }
 
 	#region Actions
 
@@ -24,7 +26,7 @@ public class HomePage : BasePage
 	public GlobalSearchPage OpenSearch()
 	{
 		Click(_magnifierIcon);
-		return new GlobalSearchPage(Driver, Wait);
+		return new GlobalSearchPage(Driver, Wait, PageSetup);
 	}
 
 	/// <summary>
@@ -34,7 +36,16 @@ public class HomePage : BasePage
 	public CareersPage GoToCareers()
 	{
 		Click(_careersLink);
-		return new CareersPage(Driver, Wait);
+		return new CareersPage(Driver, Wait, PageSetup);
+	}
+
+	/// <summary>
+	/// Scrolls to the "Code of Ethical Conduct (PDF)" link and clicks it via JavaScript.
+	/// </summary>
+	public void DownloadPolicyPdf()
+	{
+		Wait.ScrollIntoView(_policiesPdfLink);
+		Wait.JsClick(_policiesPdfLink);
 	}
 
 	#endregion

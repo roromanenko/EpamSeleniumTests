@@ -62,6 +62,15 @@ public class WaitHelper
 	}
 
 	/// <summary>
+	/// Scrolls the element into the visible area of the browser window.
+	/// </summary>
+	public void ScrollIntoView(By locator)
+	{
+		var element = WaitForElement(locator);
+		((IJavaScriptExecutor)_driver).ExecuteScript("arguments[0].scrollIntoView(true);", element);
+	}
+
+	/// <summary>
 	/// Waits until at least one element matching the locator is present and returns all matches.
 	/// </summary>
 	public IReadOnlyCollection<IWebElement> WaitForElements(By locator)

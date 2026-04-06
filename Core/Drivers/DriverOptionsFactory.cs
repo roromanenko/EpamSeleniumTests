@@ -15,14 +15,28 @@ public static class DriverOptionsFactory
 	/// <summary>
 	/// Creates Chrome-specific options with settings optimized for test automation.
 	/// </summary>
-	public static ChromeOptions CreateChromeOptions()
+	/// <param name="downloadDirectory">
+	/// Optional path for the Chrome download directory.
+	/// When non-null, Chrome is configured to save files there without prompting.
+	/// </param>
+	public static ChromeOptions CreateChromeOptions(string? downloadDirectory = null)
 	{
 		var options = new ChromeOptions();
 		options.AddArgument("--disable-notifications");
-		options.AddArgument("--incognito");
 		options.AddArgument("--disable-extensions");
 		options.AddArgument("--start-maximized");
 		options.PageLoadStrategy = PageLoadStrategy.Normal;
+
+		if (downloadDirectory is null)
+		{
+			options.AddArgument("--incognito");
+		}
+		else
+		{
+			options.AddArgument("--safebrowsing-disable-download-protection");
+			options.AddArgument("--disable-features=DownloadBubble,DownloadBubbleV2");
+		}
+
 		return options;
 	}
 

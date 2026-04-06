@@ -13,7 +13,7 @@ public class JobApplicationPage : BasePage
 
 	#endregion
 
-	public JobApplicationPage(IWebDriver driver, WaitHelper wait) : base(driver, wait) { }
+	public JobApplicationPage(IWebDriver driver, WaitHelper wait, PageSetupHelper pageSetup) : base(driver, wait, pageSetup) { }
 
 	#region Actions
 

@@ -21,7 +21,7 @@ public class SearchPositionTests : BaseTest
 	[TestCaseSource(typeof(SearchTestData), nameof(SearchTestData.SearchPositionData))]
 	public void ValidateUserCanSearchForPositionByCriteria(string keyword, string location)
 	{
-		var homePage = new HomePage(Driver!, Wait!);
+		var homePage = new HomePage(Driver!, Wait!, PageSetup);
 		homePage.NavigateTo(Config.BaseUrl);
 
 		var careersPage = homePage.GoToCareers();

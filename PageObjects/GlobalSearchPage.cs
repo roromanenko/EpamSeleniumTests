@@ -1,6 +1,5 @@
 using Core.Helpers;
 using OpenQA.Selenium;
-using OpenQA.Selenium.BiDi.Session;
 
 namespace PageObjects;
 
@@ -16,7 +15,7 @@ public class GlobalSearchPage : BasePage
 
 	#endregion
 
-	public GlobalSearchPage(IWebDriver driver, WaitHelper wait) : base(driver, wait) { }
+	public GlobalSearchPage(IWebDriver driver, WaitHelper wait, PageSetupHelper pageSetup) : base(driver, wait, pageSetup) { }
 
 	#region Actions
 

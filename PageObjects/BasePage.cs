@@ -7,11 +7,13 @@ public abstract class BasePage
 {
 	protected readonly IWebDriver Driver;
 	protected readonly WaitHelper Wait;
+	protected readonly PageSetupHelper PageSetup;
 
-	protected BasePage(IWebDriver driver, WaitHelper wait)
+	protected BasePage(IWebDriver driver, WaitHelper wait, PageSetupHelper pageSetup)
 	{
 		Driver = driver;
 		Wait = wait;
+		PageSetup = pageSetup;
 	}
 
 	#region Navigation

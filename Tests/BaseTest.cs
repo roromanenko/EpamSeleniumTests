@@ -17,7 +17,7 @@ public abstract class BaseTest
 
 	protected readonly IWebDriverFactory DriverFactory =
 		_serviceProvider.GetRequiredService<IWebDriverFactory>();
-	protected TestConfiguration Config =
+	protected readonly TestConfiguration Config =
 		_serviceProvider.GetRequiredService<ITestConfigurationProvider>().GetConfiguration();
 
 	protected IWebDriver Driver { get; private set; }
