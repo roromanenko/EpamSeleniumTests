@@ -1,11 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using Core.Interfaces;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Firefox;
-using SeleniumUndetectedChromeDriver;
-using WebDriverManager;
-using WebDriverManager.DriverConfigs.Impl;
 
 namespace Core.Drivers;
 

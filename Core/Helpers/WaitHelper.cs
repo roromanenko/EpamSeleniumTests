@@ -71,6 +71,24 @@ public class WaitHelper
 	}
 
 	/// <summary>
+	/// Waits until the element matching the locator has non-empty text, then returns that text.
+	/// Use when the element appears in the DOM before its text content is rendered (e.g. animated carousels).
+	/// </summary>
+	public string WaitForNonEmptyText(By locator) =>
+		_wait.Until(d =>
+		{
+			try
+			{
+				var text = d.FindElement(locator).Text;
+				return text.Length > 0 ? text : null;
+			}
+			catch (StaleElementReferenceException)
+			{
+				return null;
+			}
+		})!;
+
+	/// <summary>
 	/// Waits until at least one element matching the locator is present and returns all matches.
 	/// </summary>
 	public IReadOnlyCollection<IWebElement> WaitForElements(By locator)

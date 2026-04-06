@@ -12,22 +12,37 @@ public class ChromeDriverCreator : IDriverCreator
 	private static readonly string _downloadDirectory =
 		Path.GetFullPath(Path.Combine(Path.GetTempPath(), Configuration.ConfigurationProvider.Config.DownloadDirectory));
 
+	private readonly bool _setupDownload;
+
+	public ChromeDriverCreator(bool setupDownload = true)
+	{
+		_setupDownload = setupDownload;
+	}
+
 	public ThreadLocal<IWebDriver> Create()
 	{
-		Directory.CreateDirectory(_downloadDirectory);
 		var driverPath = GetChromeDriverPath();
-		var options = DriverOptionsFactory.CreateChromeOptions(_downloadDirectory);
+		var options = _setupDownload
+			? DriverOptionsFactory.CreateChromeOptions(_downloadDirectory)
+			: DriverOptionsFactory.CreateChromeOptions();
+
 		return new ThreadLocal<IWebDriver>(() =>
 		{
 			var driver = UndetectedChromeDriver.Create(
 				options: options,
 				driverExecutablePath: driverPath
 			);
-			((ChromeDriver)driver).ExecuteCdpCommand("Browser.setDownloadBehavior", new Dictionary<string, object?>
+
+			if (_setupDownload)
 			{
-				["behavior"] = "allow",
-				["downloadPath"] = _downloadDirectory
-			});
+				Directory.CreateDirectory(_downloadDirectory);
+				((ChromeDriver)driver).ExecuteCdpCommand("Browser.setDownloadBehavior", new Dictionary<string, object?>
+				{
+					["behavior"] = "allow",
+					["downloadPath"] = _downloadDirectory
+				});
+			}
+
 			driver.Manage().Window.Maximize();
 			return driver;
 		});

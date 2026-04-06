@@ -19,7 +19,8 @@ public static class ServiceCollectionExtensions
 	public static Dictionary<string, IDriverCreator> AddChrome(
 		this Dictionary<string, IDriverCreator> creators)
 	{
-		creators["chrome"] = new ChromeDriverCreator();
+		creators["chrome"] = new ChromeDriverCreator(setupDownload: false);
+		creators["chrome-download"] = new ChromeDriverCreator(setupDownload: true);
 		return creators;
 	}
 

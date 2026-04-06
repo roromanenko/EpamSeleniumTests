@@ -28,10 +28,12 @@ public abstract class BaseTest
 	{
 	}
 
+	protected virtual string BrowserKey => Config.Browser;
+
 	[SetUp]
 	public void SetUp()
 	{
-		Driver = DriverFactory.GetDriver(Config.Browser).Value
+		Driver = DriverFactory.GetDriver(BrowserKey).Value
 			?? throw new InvalidOperationException("WebDriver instance is null.");
 		Wait = new WaitHelper(Driver, Config.Timeouts.ExplicitWait);
 		PageSetup = new PageSetupHelper(Driver, Config.Timeouts.ExplicitWait);
@@ -41,6 +43,6 @@ public abstract class BaseTest
 	[TearDown]
 	public void TearDown()
 	{
-		DriverFactory.QuitDriver(Config.Browser);
+		DriverFactory.QuitDriver(BrowserKey);
 	}
 }

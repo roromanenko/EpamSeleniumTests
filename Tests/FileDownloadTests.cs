@@ -8,6 +8,8 @@ namespace Tests;
 [TestFixture]
 public class FileDownloadTests : BaseTest
 {
+	protected override string BrowserKey => "chrome-download";
+
 	private string _downloadDir => Path.GetFullPath(Path.Combine(Path.GetTempPath(), Config.DownloadDirectory));
 
 	[SetUp]

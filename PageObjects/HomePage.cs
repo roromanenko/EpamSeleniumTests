@@ -11,6 +11,8 @@ public class HomePage : BasePage
 
 	private static readonly By _careersLink = By.LinkText("Careers");
 
+	private static readonly By _insightsLink = By.LinkText("Insights");
+
 	private static readonly By _policiesPdfLink = By.XPath("//footer//a[contains(text(),'Code of Ethical Conduct')]");
 
 	#endregion
@@ -37,6 +39,16 @@ public class HomePage : BasePage
 	{
 		Click(_careersLink);
 		return new CareersPage(Driver, Wait, PageSetup);
+	}
+
+	/// <summary>
+	/// Clicks the Insights navigation link and returns the resulting page.
+	/// </summary>
+	/// <returns>An <see cref="InsightsPage"/> representing the Insights page.</returns>
+	public InsightsPage GoToInsights()
+	{
+		Click(_insightsLink);
+		return new InsightsPage(Driver, Wait, PageSetup);
 	}
 
 	/// <summary>
