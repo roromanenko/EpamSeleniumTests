@@ -99,4 +99,32 @@ public class WaitHelper
 			return elements.Count > 0 ? elements : null;
 		});
 	}
+
+	/// <summary>
+	/// Waits until the specified attribute on the first element matching the locator
+	/// differs from <paramref name="previousValue"/>. Used to detect SPA re-renders
+	/// (e.g., a list whose first item changes after a filter is applied).
+	/// Returns the new attribute value once it differs.
+	/// </summary>
+	public string WaitForAttributeToChange(By locator, string attributeName, string? previousValue)
+	{
+		ArgumentNullException.ThrowIfNull(locator);
+		ArgumentNullException.ThrowIfNull(attributeName);
+		return _wait.Until(d =>
+		{
+			try
+			{
+				var value = d.FindElement(locator).GetAttribute(attributeName);
+				return value is not null && value != previousValue ? value : null;
+			}
+			catch (StaleElementReferenceException)
+			{
+				return null;
+			}
+			catch (NoSuchElementException)
+			{
+				return null;
+			}
+		})!;
+	}
 }

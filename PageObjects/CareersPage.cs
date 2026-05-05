@@ -16,7 +16,10 @@ public class CareersPage : BasePage
 	private static readonly By _searchButton = By.XPath("//span[contains(text(), 'SEARCH')]");
 
 	private static readonly By _latestJobResult =
-		By.XPath("(//div[@class='JobCard_panel__gTD7e'])[last()]/div[@role='group']/div/div[@class='AccordionSection_title__L0ERa JobCard_accordionTitle__D1KeP']//a");
+		By.XPath("(//a[@data-testid='job-card-link'])[last()]");
+
+	private static readonly By _firstJobResult =
+		By.XPath("(//a[@data-testid='job-card-link'])[1]");
 
 	#endregion
 
@@ -35,9 +38,13 @@ public class CareersPage : BasePage
 		PageSetup.HandleCookieBanner();
 
 		Type(_keywordsInput, keyword);
-
 		Click(_remoteOption);
+
+		var firstCardHrefBefore = WaitForElement(_firstJobResult).GetAttribute("href");
+
 		Click(_searchButton);
+		Wait.WaitForAttributeToChange(_firstJobResult, "href", firstCardHrefBefore);
+
 		Click(_latestJobResult);
 
 		return new JobApplicationPage(Driver, Wait, PageSetup);

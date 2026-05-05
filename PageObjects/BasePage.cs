@@ -1,5 +1,6 @@
 using Core.Helpers;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Interactions;
 
 namespace PageObjects;
 
@@ -46,6 +47,11 @@ public abstract class BasePage
 			Log($"WARNING: Click intercepted on {locator}, falling back to JS click");
 			Wait.JsClick(locator);
 		}
+		catch (StaleElementReferenceException)
+		{
+			Log($"WARNING: Stale element on {locator}, re-finding and retrying click");
+			Wait.WaitForElementClickable(locator).Click();
+		}
 	}
 
 	/// <summary>
@@ -62,6 +68,16 @@ public abstract class BasePage
 		element.Clear();
 		element.SendKeys(text);
 
+	}
+
+	/// <summary>
+	/// Scrolls the page vertically by the given pixel offset using a wheel gesture.
+	/// </summary>
+	/// <param name="yOffset">Pixels to scroll; positive scrolls down, negative scrolls up.</param>
+	public void ScrollByWheel(int yOffset)
+	{
+		Log($"ScrollByWheel: yOffset={yOffset}");
+		new Actions(Driver).ScrollByAmount(0, yOffset).Perform();
 	}
 
 	#endregion

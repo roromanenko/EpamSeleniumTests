@@ -15,6 +15,8 @@ public class InsightsPage : BasePage
 
 	#endregion
 
+	private const int CarouselScrollOffsetPx = 700;
+
 	public InsightsPage(IWebDriver driver, WaitHelper wait, PageSetupHelper pageSetup) : base(driver, wait, pageSetup) { }
 
 	#region Actions
@@ -36,7 +38,7 @@ public class InsightsPage : BasePage
 	/// </summary>
 	public void SwipeCarouselRight()
 	{
-		Wait.ScrollIntoView(_carouselNextButton);
+		ScrollByWheel(CarouselScrollOffsetPx);
 		Click(_carouselNextButton);
 		WaitForElement(_activeCarouselTitle);
 	}
