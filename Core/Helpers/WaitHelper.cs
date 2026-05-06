@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using NLog;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 
@@ -10,6 +11,8 @@ namespace Core.Helpers;
 /// </summary>
 public class WaitHelper
 {
+	private static readonly Logger _log = LogManager.GetCurrentClassLogger();
+
 	private readonly IWebDriver _driver;
 	private readonly WebDriverWait _wait;
 
@@ -34,6 +37,7 @@ public class WaitHelper
 			}
 			catch (StaleElementReferenceException)
 			{
+				_log.Debug("StaleElementReferenceException caught; retrying.");
 				return null;
 			}
 		});

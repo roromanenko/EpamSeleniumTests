@@ -1,3 +1,5 @@
+using NLog;
+
 namespace Core.Helpers;
 
 /// <summary>
@@ -5,6 +7,8 @@ namespace Core.Helpers;
 /// </summary>
 public static class FileDownloadHelper
 {
+	private static readonly Logger _log = LogManager.GetCurrentClassLogger();
+
 	private const int PollIntervalMs = 500;
 
 	/// <summary>
@@ -17,8 +21,8 @@ public static class FileDownloadHelper
 	/// <returns><c>true</c> if the file was found; <c>false</c> on timeout.</returns>
 	public static bool WaitForFileDownload(string directoryPath, string fileName, int timeoutSeconds)
 	{
-		if (string.IsNullOrEmpty(directoryPath)) throw new ArgumentNullException(nameof(directoryPath));
-		if (string.IsNullOrEmpty(fileName)) throw new ArgumentNullException(nameof(fileName));
+		ArgumentException.ThrowIfNullOrEmpty(directoryPath);
+		ArgumentException.ThrowIfNullOrEmpty(fileName);
 
 		var deadline = DateTime.UtcNow.AddSeconds(timeoutSeconds);
 		var targetPath = Path.Combine(directoryPath, fileName);
@@ -27,11 +31,15 @@ public static class FileDownloadHelper
 		while (DateTime.UtcNow < deadline)
 		{
 			if (File.Exists(targetPath) && !File.Exists(partialPath))
+			{
+				_log.Info("File downloaded: {FileName}", fileName);
 				return true;
+			}
 
 			Thread.Sleep(PollIntervalMs);
 		}
 
+		_log.Warn("File download timed out after {Timeout}s: {FileName}", timeoutSeconds, fileName);
 		return false;
 	}
 
@@ -41,7 +49,7 @@ public static class FileDownloadHelper
 	/// <param name="directoryPath">Directory to clean.</param>
 	public static void CleanDownloadDirectory(string directoryPath)
 	{
-		if (string.IsNullOrEmpty(directoryPath)) throw new ArgumentNullException(nameof(directoryPath));
+		ArgumentException.ThrowIfNullOrEmpty(directoryPath);
 
 		if (!Directory.Exists(directoryPath))
 			return;

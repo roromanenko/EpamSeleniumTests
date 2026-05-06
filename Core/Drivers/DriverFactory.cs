@@ -1,14 +1,17 @@
 ﻿using System.Collections.Concurrent;
 using Core.Interfaces;
+using NLog;
 using OpenQA.Selenium;
 
 namespace Core.Drivers;
 
 /// <summary>
-/// Factory for creating and managing WebDriver instances per browser and thread.
+/// Browser Factory: creates and manages WebDriver instances per browser and per thread.
 /// </summary>
 public class DriverFactory : IWebDriverFactory
 {
+	private static readonly Logger _log = LogManager.GetCurrentClassLogger();
+
 	private readonly ConcurrentDictionary<string, Lazy<ThreadLocal<IWebDriver>>> _drivers = new();
 	private readonly Dictionary<string, IDriverCreator> _creators;
 
@@ -24,6 +27,8 @@ public class DriverFactory : IWebDriverFactory
 			if (!_creators.TryGetValue(name.ToLower(), out var creator))
 				throw new ArgumentException($"Unsupported browser: {name}");
 
+			_log.Info("GetDriver: {Browser}", name);
+
 			return new Lazy<ThreadLocal<IWebDriver>>(
 				creator.Create,
 				LazyThreadSafetyMode.ExecutionAndPublication
@@ -36,6 +41,8 @@ public class DriverFactory : IWebDriverFactory
 	/// </summary>
 	public void QuitDriver(string browserName)
 	{
+		_log.Info("QuitDriver: {Browser}", browserName);
+
 		if (_drivers.TryGetValue(browserName, out var webDriver))
 		{
 			if (webDriver.IsValueCreated)

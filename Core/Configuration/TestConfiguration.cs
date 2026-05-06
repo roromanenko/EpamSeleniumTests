@@ -9,6 +9,9 @@ public class TestConfiguration
 	public required string BaseUrl { get; set; }
 	public required TimeoutsConfiguration Timeouts { get; set; }
 	public required string DownloadDirectory { get; set; }
+	public required LoggingConfiguration Logging { get; set; }
+	public required ScreenshotsConfiguration Screenshots { get; set; }
+	public string Environment { get; set; } = string.Empty;
 }
 
 /// <summary>
@@ -18,4 +21,21 @@ public class TimeoutsConfiguration
 {
 	public int ImplicitWait { get; set; }
 	public int ExplicitWait { get; set; }
+}
+
+/// <summary>
+/// Represents NLog logging configuration for the test framework.
+/// </summary>
+public class LoggingConfiguration
+{
+	public required string MinLevel { get; set; }
+	public required string FileLogDirectory { get; set; }
+}
+
+/// <summary>
+/// Represents screenshot output configuration for failure captures.
+/// </summary>
+public class ScreenshotsConfiguration
+{
+	public required string Directory { get; set; }
 }

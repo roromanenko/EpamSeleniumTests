@@ -1,4 +1,5 @@
 ﻿using Core.Interfaces;
+using NLog;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using SeleniumUndetectedChromeDriver;
@@ -9,6 +10,8 @@ namespace Core.Drivers;
 
 public class ChromeDriverCreator : IDriverCreator
 {
+	private static readonly Logger _log = LogManager.GetCurrentClassLogger();
+
 	private static readonly string _downloadDirectory =
 		Path.GetFullPath(Path.Combine(Path.GetTempPath(), Configuration.ConfigurationProvider.Config.DownloadDirectory));
 
@@ -44,6 +47,7 @@ public class ChromeDriverCreator : IDriverCreator
 			}
 
 			driver.Manage().Window.Maximize();
+			_log.Info("ChromeDriver created. Download setup: {SetupDownload}", _setupDownload);
 			return driver;
 		});
 	}

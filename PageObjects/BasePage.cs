@@ -1,4 +1,5 @@
 using Core.Helpers;
+using NLog;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
 
@@ -6,6 +7,8 @@ namespace PageObjects;
 
 public abstract class BasePage
 {
+	private static readonly Logger _log = LogManager.GetCurrentClassLogger();
+
 	protected readonly IWebDriver Driver;
 	protected readonly WaitHelper Wait;
 	protected readonly PageSetupHelper PageSetup;
@@ -37,19 +40,19 @@ public abstract class BasePage
 	public void Click(By locator)
 	{
 		ArgumentNullException.ThrowIfNull(locator);
-		Log($"Click: {locator}");
+		_log.Info("Click: {Locator}", locator);
 		try
 		{
 			Wait.WaitForElementClickable(locator).Click();
 		}
 		catch (ElementClickInterceptedException)
 		{
-			Log($"WARNING: Click intercepted on {locator}, falling back to JS click");
+			_log.Warn("Click intercepted on {Locator}, falling back to JS click.", locator);
 			Wait.JsClick(locator);
 		}
 		catch (StaleElementReferenceException)
 		{
-			Log($"WARNING: Stale element on {locator}, re-finding and retrying click");
+			_log.Warn("Stale element on {Locator}, re-finding and retrying click.", locator);
 			Wait.WaitForElementClickable(locator).Click();
 		}
 	}
@@ -62,12 +65,11 @@ public abstract class BasePage
 	public void Type(By locator, string text)
 	{
 		ArgumentNullException.ThrowIfNull(locator);
-		Log($"Type: {locator} <- \"{text}\"");
+		_log.Info("Type: {Locator} <- \"{Text}\"", locator, text);
 
 		var element = Wait.WaitForElement(locator);
 		element.Clear();
 		element.SendKeys(text);
-
 	}
 
 	/// <summary>
@@ -76,7 +78,7 @@ public abstract class BasePage
 	/// <param name="yOffset">Pixels to scroll; positive scrolls down, negative scrolls up.</param>
 	public void ScrollByWheel(int yOffset)
 	{
-		Log($"ScrollByWheel: yOffset={yOffset}");
+		_log.Info("ScrollByWheel: yOffset={YOffset}", yOffset);
 		new Actions(Driver).ScrollByAmount(0, yOffset).Perform();
 	}
 
@@ -94,12 +96,6 @@ public abstract class BasePage
 		ArgumentNullException.ThrowIfNull(locator);
 		return Wait.WaitForElement(locator);
 	}
-
-	#endregion
-
-	#region Private helpers
-
-	private void Log(string message) => Console.WriteLine($"[BasePage] {message}");
 
 	#endregion
 }
