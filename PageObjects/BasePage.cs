@@ -82,6 +82,18 @@ public abstract class BasePage
 		new Actions(Driver).ScrollByAmount(0, yOffset).Perform();
 	}
 
+	/// <summary>
+	/// Moves the mouse pointer to the element identified by the given locator.
+	/// </summary>
+	/// <param name="locator">The Selenium locator strategy for the target element.</param>
+	public void Hover(By locator)
+	{
+		ArgumentNullException.ThrowIfNull(locator);
+		_log.Info("Hover: {Locator}", locator);
+		var element = Wait.WaitForElement(locator);
+		new Actions(Driver).MoveToElement(element).Perform();
+	}
+
 	#endregion
 
 	#region Wait delegates
@@ -95,6 +107,28 @@ public abstract class BasePage
 	{
 		ArgumentNullException.ThrowIfNull(locator);
 		return Wait.WaitForElement(locator);
+	}
+
+	#endregion
+
+	#region Element checks
+
+	/// <summary>
+	/// Returns <see langword="true"/> if the element identified by the locator is displayed within the wait timeout;
+	/// <see langword="false"/> if the element is not found.
+	/// </summary>
+	public bool IsDisplayed(By locator)
+	{
+		ArgumentNullException.ThrowIfNull(locator);
+
+		try
+		{
+			return Wait.WaitForElement(locator).Displayed;
+		}
+		catch (WebDriverTimeoutException)
+		{
+			return false;
+		}
 	}
 
 	#endregion

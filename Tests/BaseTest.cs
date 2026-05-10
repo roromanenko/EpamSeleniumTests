@@ -1,10 +1,11 @@
-﻿using Core.Configuration;
+using Core.Configuration;
 using Core.Helpers;
 using Core.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
 using NUnit.Framework.Interfaces;
 using OpenQA.Selenium;
+using Tests.Support;
 
 namespace Tests;
 
@@ -16,7 +17,6 @@ namespace Tests;
 public abstract class BaseTest
 {
 	private static readonly Logger _log = LogManager.GetCurrentClassLogger();
-	private const string ScreenshotTimestampFormat = "yyyy-MM-dd_HH-mm-ss";
 
 	private static readonly IServiceProvider _serviceProvider = ServiceProviderFactory.Create();
 
@@ -24,6 +24,9 @@ public abstract class BaseTest
 		_serviceProvider.GetRequiredService<IWebDriverFactory>();
 	protected readonly TestConfiguration Config =
 		_serviceProvider.GetRequiredService<ITestConfigurationProvider>().GetConfiguration();
+
+	private IServiceScope _scope = null!;
+	private TestLifecycleService _lifecycle = null!;
 
 	protected IWebDriver Driver { get; private set; } = null!;
 	protected WaitHelper Wait { get; private set; } = null!;
@@ -34,6 +37,9 @@ public abstract class BaseTest
 	[SetUp]
 	public void SetUp()
 	{
+		_scope = _serviceProvider.CreateScope();
+		_lifecycle = _scope.ServiceProvider.GetRequiredService<TestLifecycleService>();
+
 		Driver = DriverFactory.GetDriver(BrowserKey).Value
 			?? throw new InvalidOperationException("WebDriver instance is null.");
 		Wait = new WaitHelper(Driver, Config.Timeouts.ExplicitWait);
@@ -48,32 +54,13 @@ public abstract class BaseTest
 		try
 		{
 			if (TestContext.CurrentContext.Result.Outcome.Status == TestStatus.Failed)
-				CaptureScreenshotOnFailure();
+				_lifecycle.CaptureScreenshotOnFailure(Driver, TestContext.CurrentContext.Test.Name, Config.Screenshots.Directory, TestContext.CurrentContext.WorkDirectory);
 		}
 		finally
 		{
 			_log.Info("TearDown: {TestName}", TestContext.CurrentContext.Test.Name);
 			DriverFactory.QuitDriver(BrowserKey);
+			_scope?.Dispose();
 		}
-	}
-
-	private void CaptureScreenshotOnFailure()
-	{
-		if (Driver is null) return;
-
-		var safeName = SanitizeFileName(TestContext.CurrentContext.Test.Name);
-		var fileName = $"{safeName}_{DateTime.Now.ToString(ScreenshotTimestampFormat)}.png";
-		var dir = Path.Combine(TestContext.CurrentContext.WorkDirectory, Config.Screenshots.Directory);
-		Directory.CreateDirectory(dir);
-		var fullPath = Path.Combine(dir, fileName);
-		((ITakesScreenshot)Driver).GetScreenshot().SaveAsFile(fullPath);
-		TestContext.AddTestAttachment(fullPath, "Screenshot on failure");
-		_log.Error("Screenshot on failure saved: {Path}", fullPath);
-	}
-
-	private static string SanitizeFileName(string name)
-	{
-		var invalid = Path.GetInvalidFileNameChars();
-		return string.Concat(name.Select(c => invalid.Contains(c) ? '_' : c));
 	}
 }

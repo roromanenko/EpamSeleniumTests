@@ -1,5 +1,6 @@
 using Core.Helpers;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Interactions;
 
 namespace PageObjects;
 
@@ -14,6 +15,8 @@ public class HomePage : BasePage
 	private static readonly By _insightsLink = By.LinkText("Insights");
 
 	private static readonly By _policiesPdfLink = By.XPath("//footer//a[contains(text(),'Code of Ethical Conduct')]");
+
+	private static readonly By _servicesNavLink = By.LinkText("Services");
 
 	#endregion
 
@@ -49,6 +52,16 @@ public class HomePage : BasePage
 	{
 		Click(_insightsLink);
 		return new InsightsPage(Driver, Wait, PageSetup);
+	}
+
+	/// <summary>
+	/// Hovers over the Services navigation link to open the Services dropdown menu.
+	/// </summary>
+	/// <returns>A <see cref="ServicesMenu"/> representing the Services dropdown.</returns>
+	public ServicesMenu OpenServicesMenu()
+	{
+		Hover(_servicesNavLink);
+		return new ServicesMenu(Driver, Wait, PageSetup);
 	}
 
 	/// <summary>

@@ -16,6 +16,9 @@
     <PackageReference Include="NUnit" Version="4.3.2" />
     <PackageReference Include="NUnit.Analyzers" Version="4.7.0" />
     <PackageReference Include="NUnit3TestAdapter" Version="5.0.0" />
+    <PackageReference Include="Reqnroll.NUnit" Version="2.4.1" />
+    <PackageReference Include="Reqnroll.Tools.MsBuild.Generation" Version="2.4.1" />
+    <PackageReference Include="Reqnroll.Microsoft.Extensions.DependencyInjection" Version="2.4.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -32,6 +35,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="nlog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="reqnroll.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

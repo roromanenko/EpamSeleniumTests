@@ -485,6 +485,9 @@ temp/
 .yarn/install-state.gz
 .pnp.*
 
+# Renqroll
+*.feature.cs
+
 # Environment variables
 .env
 .env.local
