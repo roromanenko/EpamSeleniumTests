@@ -11,6 +11,7 @@ public class TestConfiguration
 	public required string DownloadDirectory { get; set; }
 	public required LoggingConfiguration Logging { get; set; }
 	public required ScreenshotsConfiguration Screenshots { get; set; }
+	public required ApiConfiguration Api { get; set; }
 	public string Environment { get; set; } = string.Empty;
 }
 
@@ -38,4 +39,13 @@ public class LoggingConfiguration
 public class ScreenshotsConfiguration
 {
 	public required string Directory { get; set; }
+}
+
+/// <summary>
+/// Represents HTTP API client configuration for test fixtures.
+/// </summary>
+public class ApiConfiguration
+{
+	public required string BaseUrl { get; set; }
+	public required int Timeout { get; set; }
 }
