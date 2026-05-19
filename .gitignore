@@ -493,4 +493,8 @@ temp/
 .env.local
 .env.development.local
 .env.test.local
-.env.production.local 
+.env.production.local
+
+# CI-generated test artifacts
+screenshots/
+**/TestResults/

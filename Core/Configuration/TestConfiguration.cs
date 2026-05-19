@@ -13,6 +13,7 @@ public class TestConfiguration
 	public required ScreenshotsConfiguration Screenshots { get; set; }
 	public required ApiConfiguration Api { get; set; }
 	public string Environment { get; set; } = string.Empty;
+	public bool Headless { get; set; } = false;
 }
 
 /// <summary>

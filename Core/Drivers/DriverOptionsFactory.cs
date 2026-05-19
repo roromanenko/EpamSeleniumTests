@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using Core.Configuration;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 
@@ -10,6 +11,12 @@ namespace Core.Drivers;
 /// </summary>
 public static class DriverOptionsFactory
 {
+	private const string ChromeHeadlessArg = "--headless=new";
+	// --no-sandbox is required when Chrome runs as root in Linux CI containers
+	// that lack user-namespace sandbox capabilities (e.g. GitHub Actions ubuntu-latest).
+	private const string ChromeNoSandboxArg = "--no-sandbox";
+	private const string FirefoxHeadlessArg = "-headless";
+
 	#region Chrome Options
 
 	/// <summary>
@@ -37,6 +44,12 @@ public static class DriverOptionsFactory
 			options.AddArgument("--disable-features=DownloadBubble,DownloadBubbleV2");
 		}
 
+		if (ConfigurationProvider.Config.Headless)
+		{
+			options.AddArgument(ChromeHeadlessArg);
+			options.AddArgument(ChromeNoSandboxArg);
+		}
+
 		return options;
 	}
 
@@ -55,6 +68,10 @@ public static class DriverOptionsFactory
 		options.AddArgument("-private");
 		options.SetPreference("dom.webnotifications.enabled", false);
 		options.AcceptInsecureCertificates = true;
+
+		if (ConfigurationProvider.Config.Headless)
+			options.AddArgument(FirefoxHeadlessArg);
+
 		return options;
 	}
 

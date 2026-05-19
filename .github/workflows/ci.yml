@@ -1,0 +1,94 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      browser:
+        type: choice
+        description: Browser to run UI tests with
+        options:
+          - chrome
+          - firefox
+        default: chrome
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        run: dotnet restore EpamTests.slnx
+
+      - name: Build
+        run: dotnet build EpamTests.slnx --no-restore --configuration Release
+
+      - name: API tests
+        continue-on-error: true
+        run: >
+          dotnet test Tests/Tests.csproj
+          --no-build
+          --configuration Release
+          --filter "TestCategory=API"
+          --logger "trx;LogFileName=api-results.trx"
+          --results-directory Tests/TestResults
+
+      - name: UI tests
+        if: always()
+        env:
+          TAF_Browser: ${{ inputs.browser || 'chrome' }}
+          TAF_Headless: 'true'
+        run: >
+          dotnet test Tests/Tests.csproj
+          --no-build
+          --configuration Release
+          --filter "TestCategory!=API"
+          --logger "trx;LogFileName=ui-results.trx"
+          --results-directory Tests/TestResults
+
+      - name: Upload API results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-test-results
+          path: Tests/TestResults/api-results.trx
+
+      - name: Upload UI results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-test-results
+          path: Tests/TestResults/ui-results.trx
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-screenshots
+          path: Tests/**/screenshots/**
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-logs
+          path: Tests/**/logs/**
