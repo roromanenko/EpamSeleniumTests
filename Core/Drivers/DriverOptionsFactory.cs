@@ -15,6 +15,9 @@ public static class DriverOptionsFactory
 	// --no-sandbox is required when Chrome runs as root in Linux CI containers
 	// that lack user-namespace sandbox capabilities (e.g. GitHub Actions ubuntu-latest).
 	private const string ChromeNoSandboxArg = "--no-sandbox";
+	// --start-maximized is ignored in headless mode, so an explicit window size
+	// is required — otherwise Chrome defaults to ~800x600 and sites render their mobile layout.
+	private const string ChromeHeadlessWindowSizeArg = "--window-size=1920,1080";
 	private const string FirefoxHeadlessArg = "-headless";
 
 	#region Chrome Options
@@ -48,6 +51,7 @@ public static class DriverOptionsFactory
 		{
 			options.AddArgument(ChromeHeadlessArg);
 			options.AddArgument(ChromeNoSandboxArg);
+			options.AddArgument(ChromeHeadlessWindowSizeArg);
 		}
 
 		return options;

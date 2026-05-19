@@ -22,9 +22,14 @@ public class TestLifecycleService
 		_log.Error("Screenshot on failure saved: {Path}", fullPath);
 	}
 
+	// Path.GetInvalidFileNameChars() returns only '/' and '\0' on Linux, so quotes and other
+	// characters survive in filenames built from NUnit test names with parameters
+	// (e.g. ValidateX("foo")). actions/upload-artifact rejects such filenames cross-platform.
+	private static readonly char[] _additionalInvalidFileNameChars = ['"', ':', '<', '>', '|', '*', '?'];
+
 	private static string SanitizeFileName(string name)
 	{
 		var invalid = Path.GetInvalidFileNameChars();
-		return string.Concat(name.Select(c => invalid.Contains(c) ? '_' : c));
+		return string.Concat(name.Select(c => invalid.Contains(c) || _additionalInvalidFileNameChars.Contains(c) ? '_' : c));
 	}
 }
